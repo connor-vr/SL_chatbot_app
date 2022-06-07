@@ -43,9 +43,13 @@ if user_input:
             "past_user_inputs": st.session_state.past,
             "generated_responses": st.session_state.generated,
             "text": user_input,
-        },"parameters": {
+        },
+        "parameters": {
             "temperature": 16.0,
             "repetition_penalty": 1.33
+            },
+        "options": {
+            "wait_for_model": True,
             },
     })
 
