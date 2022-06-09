@@ -8,6 +8,7 @@ Created on Mon Jun  6 16:02:18 2022
 import streamlit as st
 from streamlit_chat import message
 import requests
+import time
 
 st.set_page_config(
     page_title="WiseBot",
@@ -38,7 +39,7 @@ def get_text():
 user_input = get_text()
 
 if user_input:
-    output = query({
+    payload = {
         "inputs": {
             "past_user_inputs": st.session_state.past,
             "generated_responses": st.session_state.generated,
@@ -48,13 +49,24 @@ if user_input:
             "temperature": 16.0,
             "repetition_penalty": 1.33
             },
-        "options": {
-            "wait_for_model": True,
-            },
-    })
+        # "options": {
+        #     "wait_for_model": True,
+        #     },
+    }
+    bot_response = None
+    while not bot_response:
+        response = query(payload)
+        bot_response = response.get('generated_text', None)
+        
+        # we may get ill-formed response if the model hasn't fully loaded
+        # or has timed out
+        if not bot_response:
+            if response['error'] == 'Model Buddha/BrightBot-med is currently loading':
+                time.sleep(15)
+
 
     st.session_state.past.append(user_input)
-    st.session_state.generated.append(output["generated_text"])
+    st.session_state.generated.append(response["generated_text"])
 
 if st.session_state['generated']:
 
