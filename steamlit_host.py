@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 API_URL = "https://api-inference.huggingface.co/models/Buddha/BrightBot-med"
-headers = {"Authorization": st.secrets['api_key']}
+headers = {"Authorization": 'Bearer {}'.format(st.secrets['api_key'])}
 
 st.header("WiseBot")
 #st.markdown("[Github](https://github.com/---)")
