@@ -22,10 +22,10 @@ st.header("WiseBot")
 #st.markdown("[Github](https://github.com/---)")
 
 if 'generated' not in st.session_state:
-    st.session_state['generated'] = []
+    st.session_state['generated'] = [' ']
 
 if 'past' not in st.session_state:
-    st.session_state['past'] = []
+    st.session_state['past'] = [' ']
     
 for i in range(len(st.session_state['generated'])-1):
     message(st.session_state["generated"][i], key=str(i))
