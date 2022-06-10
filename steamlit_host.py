@@ -27,17 +27,16 @@ if 'generated' not in st.session_state:
 if 'past' not in st.session_state:
     st.session_state['past'] = []
     
-if st.session_state['generated']:
-    for i in range(len(st.session_state['generated'])-1):
-        message(st.session_state["generated"][i], key=str(i))
-        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+for i in range(len(st.session_state['generated'])-1):
+    message(st.session_state["generated"][i], key=str(i))
+    message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
 
 def query(payload):
 	response = requests.post(API_URL, headers=headers, json=payload)
 	return response.json()
 
 def get_text():
-    input_text = st.text_input("You: ", key="input")
+    input_text = st.text_input("You: ")
     return input_text 
 
 
@@ -72,4 +71,10 @@ if user_input and len(user_input)>0:
 
     st.session_state.past.append(user_input)
     st.session_state.generated.append(response["generated_text"])
+    # max_context = 4
+    # if len(st.session_state.past) > max_context:
+    #     st.session_state['past'] = st.session_state.past[-max_context:]
+    # if len(st.session_state.generated) > max_context:
+    #     st.session_state['generated'] = st.session_state.generated[-max_context:]
+        
 
