@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jun  6 16:02:18 2022
-
 @author: Connor
 """
 
@@ -77,4 +76,3 @@ if user_input and len(user_input)>0:
     # if len(st.session_state.generated) > max_context:
     #     st.session_state['generated'] = st.session_state.generated[-max_context:]
         
-
