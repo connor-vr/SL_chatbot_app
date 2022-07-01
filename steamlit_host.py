@@ -9,13 +9,37 @@ from streamlit_chat import message
 import requests
 import time
 
+API_URL = "https://api-inference.huggingface.co/models/Buddha/BrightBot-med"
+headers = {"Authorization": 'Bearer {}'.format(st.secrets['api_key'])}
+
+def query(payload):
+	response = requests.post(API_URL, headers=headers, json=payload)
+	return response.json()
+
+def get_text():
+    input_text = st.text_input("You: ")
+    return input_text 
+
+
+payload = {
+    "inputs": {
+        "past_user_inputs": [],
+        "generated_responses": [],
+        "text": "Hi.",
+    },
+    "parameters": {
+        "temperature": 2.8,
+        "repetition_penalty": 1.63
+        }
+    }
+
+_ = query(payload)
+
 st.set_page_config(
     page_title="WiseBot",
     page_icon=":robot:"
 )
 
-API_URL = "https://api-inference.huggingface.co/models/Buddha/BrightBot-med"
-headers = {"Authorization": 'Bearer {}'.format(st.secrets['api_key'])}
 
 st.header("WiseBot")
 #st.markdown("[Github](https://github.com/---)")
@@ -26,18 +50,11 @@ if 'generated' not in st.session_state:
 if 'past' not in st.session_state:
     st.session_state['past'] = []
 
-def query(payload):
-	response = requests.post(API_URL, headers=headers, json=payload)
-	return response.json()
-
-def get_text():
-    input_text = st.text_input("You: ","Hello, how are you?", key="input")
-    return input_text 
 
 
 user_input = get_text()
 
-if user_input:
+if user_input and len(user_input)>0:
     payload = {
         "inputs": {
             "past_user_inputs": st.session_state.past,
@@ -45,8 +62,8 @@ if user_input:
             "text": user_input,
         },
         "parameters": {
-            "temperature": 16.0,
-            "repetition_penalty": 1.33
+            "temperature": 2.8,
+            "repetition_penalty": 1.63
             },
         # "options": {
         #     "wait_for_model": True,
@@ -66,9 +83,13 @@ if user_input:
 
     st.session_state.past.append(user_input)
     st.session_state.generated.append(response["generated_text"])
-
+    max_context = 4
+    if len(st.session_state.past) > max_context:
+        st.session_state['past'] = st.session_state.past[-max_context:]
+    if len(st.session_state.generated) > max_context:
+        st.session_state['generated'] = st.session_state.generated[-max_context:]
+    
 if st.session_state['generated']:
-
     for i in range(len(st.session_state['generated'])-1, -1, -1):
         message(st.session_state["generated"][i], key=str(i))
         message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
